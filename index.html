@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Jasmeet — Portfolio</title>
+    <meta name="description" content="Jasmeet's interactive 3D driving portfolio" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Nunito:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Loading screen -->
+      <div id="loading-screen" class="screen">
+        <div class="grid-bg"></div>
+        <div class="loading-content">
+          <h1 class="title">Jasmeet<span class="dot">.</span></h1>
+          <div class="loading-bar">
+            <div id="loading-bar-fill" class="loading-bar-fill"></div>
+          </div>
+          <p id="loading-label" class="loading-label">loading the world…</p>
+        </div>
+      </div>
+
+      <!-- Start overlay (shown once assets are ready) -->
+      <div id="start-screen" class="screen hidden">
+        <div class="grid-bg"></div>
+        <div class="start-content">
+          <h1 class="title">Jasmeet<span class="dot">.</span></h1>
+          <p class="subtitle">an interactive 3D portfolio — hop in and drive around</p>
+          <button id="start-button" class="start-button">
+            Click to start
+            <span class="hand-arrow">↶</span>
+          </button>
+          <p class="hint">WASD / Arrow keys to drive · E to interact with a kiosk</p>
+        </div>
+      </div>
+
+      <!-- 3D canvas -->
+      <canvas id="experience-canvas"></canvas>
+
+      <!-- HUD -->
+      <div id="hud" class="hidden">
+        <div id="prompt" class="prompt hidden">press <kbd>E</kbd> to view</div>
+        <div id="controls-hint" class="controls-hint">WASD to drive</div>
+      </div>
+
+      <!-- Info panel (About / Projects / Contact) -->
+      <div id="info-panel" class="info-panel hidden">
+        <button id="info-close" class="info-close">×</button>
+        <div id="info-body" class="info-body"></div>
+      </div>
+
+      <!-- Touch controls (mobile) -->
+      <div id="touch-controls" class="touch-controls hidden">
+        <div class="touch-move">
+          <button data-key="KeyW" class="touch-btn up">▲</button>
+          <div class="touch-row">
+            <button data-key="KeyA" class="touch-btn left">◀</button>
+            <button data-key="KeyS" class="touch-btn down">▼</button>
+            <button data-key="KeyD" class="touch-btn right">▶</button>
+          </div>
+        </div>
+        <button id="touch-interact" class="touch-btn interact">E</button>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
