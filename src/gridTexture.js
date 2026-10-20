@@ -1,5 +1,25 @@
 import * as THREE from 'three';
 
+// A 4-step gradient ramp for MeshToonMaterial — gives flat-shaded low-poly
+// "toy" lighting bands instead of smooth PBR shading, procedurally generated
+// so no external texture file is needed.
+export function createToonGradientMap() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 4;
+  canvas.height = 1;
+  const ctx = canvas.getContext('2d');
+  const shades = [60, 130, 190, 255];
+  shades.forEach((v, i) => {
+    ctx.fillStyle = `rgb(${v},${v},${v})`;
+    ctx.fillRect(i, 0, 1, 1);
+  });
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.minFilter = THREE.NearestFilter;
+  texture.magFilter = THREE.NearestFilter;
+  texture.generateMipmaps = false;
+  return texture;
+}
+
 // Procedural grid texture for the ground — dark plum base with a soft purple
 // grid, echoing the loading-screen palette so the world feels continuous.
 export function createGroundTexture() {
@@ -60,7 +80,7 @@ export function createLabelTexture(text, { accent = '#7bf0d2' } = {}) {
   ctx.stroke();
 
   ctx.fillStyle = '#f4eefc';
-  ctx.font = '700 72px Caveat, cursive';
+  ctx.font = '700 100px "Amatic SC", cursive';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(text, canvas.width / 2, canvas.height / 2);

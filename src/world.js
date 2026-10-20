@@ -1,6 +1,10 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-import { createGroundTexture, createLabelTexture } from './gridTexture.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+import { createGroundTexture, createLabelTexture, createToonGradientMap } from './gridTexture.js';
 import { content } from './content.js';
 import { EngineAudio } from './audio.js';
 
@@ -84,6 +88,19 @@ export class World {
     const fill = new THREE.PointLight(0x7bf0d2, 0.6, 40);
     fill.position.set(-10, 8, -10);
     this.scene.add(fill);
+
+    this.toonGradientMap = createToonGradientMap();
+
+    this.composer = new EffectComposer(this.renderer);
+    this.composer.addPass(new RenderPass(this.scene, this.camera));
+    this.bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      0.4, // strength
+      0.4, // radius
+      0.8, // threshold — only bright/emissive surfaces bloom
+    );
+    this.composer.addPass(this.bloomPass);
+    this.composer.addPass(new OutputPass());
   }
 
   _initPhysics() {
@@ -162,9 +179,9 @@ export class World {
 
     // --- visual chassis ---
     const carGroup = new THREE.Group();
-    const bodyMat = new THREE.MeshStandardMaterial({ color: 0x24d3b2, roughness: 0.4, metalness: 0.1 });
-    const cabinMat = new THREE.MeshStandardMaterial({ color: 0x1b0e24, roughness: 0.3 });
-    const trimMat = new THREE.MeshStandardMaterial({ color: 0xffb86b, roughness: 0.5 });
+    const bodyMat = new THREE.MeshToonMaterial({ color: 0x24d3b2, gradientMap: this.toonGradientMap });
+    const cabinMat = new THREE.MeshToonMaterial({ color: 0x1b0e24, gradientMap: this.toonGradientMap });
+    const trimMat = new THREE.MeshToonMaterial({ color: 0xffb86b, gradientMap: this.toonGradientMap });
 
     const lower = new THREE.Mesh(new THREE.BoxGeometry(2, 0.6, 4), bodyMat);
     lower.position.y = 0.3;
@@ -189,7 +206,7 @@ export class World {
 
     const wheelGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.32, 16);
     wheelGeometry.rotateZ(Math.PI / 2);
-    const wheelMat = new THREE.MeshStandardMaterial({ color: 0x120a16, roughness: 0.8 });
+    const wheelMat = new THREE.MeshToonMaterial({ color: 0x120a16, gradientMap: this.toonGradientMap });
     this.wheelMeshes = positions.map(() => {
       const mesh = new THREE.Mesh(wheelGeometry, wheelMat);
       mesh.castShadow = true;
@@ -203,18 +220,18 @@ export class World {
       const group = new THREE.Group();
       group.position.set(...kiosk.position);
 
-      const padMat = new THREE.MeshStandardMaterial({
+      const padMat = new THREE.MeshToonMaterial({
         color: new THREE.Color(kiosk.accent),
         emissive: new THREE.Color(kiosk.accent),
-        emissiveIntensity: 0.4,
-        roughness: 0.4,
+        emissiveIntensity: 0.8,
+        gradientMap: this.toonGradientMap,
       });
       const pad = new THREE.Mesh(new THREE.CylinderGeometry(2.4, 2.6, 0.2, 24), padMat);
       pad.position.y = 0.1;
       pad.receiveShadow = true;
       group.add(pad);
 
-      const postMat = new THREE.MeshStandardMaterial({ color: 0x3a2a48, roughness: 0.6 });
+      const postMat = new THREE.MeshToonMaterial({ color: 0x3a2a48, gradientMap: this.toonGradientMap });
       const post = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 2.6, 10), postMat);
       post.position.y = 1.4;
       post.castShadow = true;
@@ -230,7 +247,7 @@ export class World {
       const beamMat = new THREE.MeshBasicMaterial({
         color: new THREE.Color(kiosk.accent),
         transparent: true,
-        opacity: 0.12,
+        opacity: 0.07,
         depthWrite: false,
       });
       const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 1.6, 8, 16, 1, true), beamMat);
@@ -243,7 +260,7 @@ export class World {
   }
 
   _buildScenery() {
-    const trunkMat = new THREE.MeshStandardMaterial({ color: 0x4a3350, roughness: 0.8 });
+    const trunkMat = new THREE.MeshToonMaterial({ color: 0x4a3350, gradientMap: this.toonGradientMap });
     const leafPalette = [0xff9ecb, 0xffb86b, 0x7bf0d2];
 
     for (let i = 0; i < 26; i += 1) {
@@ -259,7 +276,7 @@ export class World {
       tree.add(trunk);
 
       const leafColor = leafPalette[Math.floor(Math.random() * leafPalette.length)];
-      const leafMat = new THREE.MeshStandardMaterial({ color: leafColor, roughness: 0.6, flatShading: true });
+      const leafMat = new THREE.MeshToonMaterial({ color: leafColor, flatShading: true, gradientMap: this.toonGradientMap });
       const leaves = new THREE.Mesh(new THREE.IcosahedronGeometry(1.1 + Math.random() * 0.6, 0), leafMat);
       leaves.position.y = 2.1;
       leaves.castShadow = true;
@@ -396,6 +413,8 @@ export class World {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.composer.setSize(window.innerWidth, window.innerHeight);
+    this.bloomPass.setSize(window.innerWidth, window.innerHeight);
   }
 
   start() {
@@ -414,7 +433,7 @@ export class World {
     this._updateCarMeshes();
     this._updateCamera(delta);
     this._updateKioskProximity();
-    this.renderer.render(this.scene, this.camera);
+    this.composer.render();
     this._raf = requestAnimationFrame(() => this._tick());
   }
 }

@@ -7,7 +7,7 @@
   --accent-2: #ffb86b;
   --text: #f4eefc;
   --text-dim: #cbb9e6;
-  --hand-font: 'Caveat', cursive;
+  --hand-font: 'Amatic SC', cursive;
   --ui-font: 'Nunito', system-ui, sans-serif;
 }
 
@@ -96,8 +96,9 @@ body {
 
 .title {
   font-family: var(--hand-font);
-  font-size: clamp(3.5rem, 10vw, 7rem);
-  line-height: 1;
+  font-weight: 700;
+  font-size: clamp(5rem, 14vw, 10rem);
+  line-height: 0.9;
   margin: 0;
   color: var(--text);
   text-shadow: 0 0 28px rgba(123, 240, 210, 0.35);
@@ -135,7 +136,8 @@ body {
 
 .loading-label {
   font-family: var(--hand-font);
-  font-size: 1.4rem;
+  font-weight: 700;
+  font-size: 1.8rem;
   color: var(--text-dim);
   margin: 0;
 }
@@ -164,7 +166,8 @@ body {
 .start-button {
   margin-top: 18px;
   font-family: var(--hand-font);
-  font-size: 1.9rem;
+  font-weight: 700;
+  font-size: 2.6rem;
   color: var(--bg-deep);
   background: var(--accent);
   border: none;
@@ -216,7 +219,8 @@ body {
   bottom: 18%;
   transform: translateX(-50%);
   font-family: var(--hand-font);
-  font-size: 1.6rem;
+  font-weight: 700;
+  font-size: 2.1rem;
   background: rgba(21, 10, 28, 0.75);
   border: 1px solid var(--grid-cross);
   padding: 10px 22px;
@@ -293,7 +297,8 @@ body {
 
 .info-body h2 {
   font-family: var(--hand-font);
-  font-size: 2.4rem;
+  font-weight: 700;
+  font-size: 3.2rem;
   margin: 0 0 12px;
   color: var(--accent);
 }
@@ -372,7 +377,8 @@ body {
   height: 64px;
   border-radius: 50%;
   font-family: var(--hand-font);
-  font-size: 1.6rem;
+  font-weight: 700;
+  font-size: 2rem;
   background: rgba(255, 184, 107, 0.2);
 }
 
